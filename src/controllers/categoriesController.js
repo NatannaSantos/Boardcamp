@@ -11,7 +11,7 @@ export async function createCategories(req, res) {
         await db.query(`
         INSERT INTO categories (name)
             VALUES ($1)
-        `,[name]);
+        `, [name]);
         res.sendStatus(201);
 
     } catch (error) {
@@ -19,4 +19,19 @@ export async function createCategories(req, res) {
         res.sendStatus(500);
 
     }
+}
+
+export async function getCategories(req, res) {
+    try {
+        const {rows:categories}=await db.query(`
+        SELECT * FROM categories
+        `);
+        if(categories.length===0){
+            res.sendStatus(404);
+        }
+        res.send(categories);
+    } catch (error) {
+        
+    }
+
 }
