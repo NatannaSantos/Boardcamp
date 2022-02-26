@@ -20,3 +20,21 @@ export async function createCustomers(req, res) {
         res.sendStatus(500);
     }
 }
+
+export async function getCustomers(req, res) {
+    try {
+        const {rows:customers}= await db.query(`
+        SELECT * FROM customers
+        `);
+        if (customers.length === 0) {
+            res.sendStatus(404);
+            return;
+        }
+        
+        res.send(customers);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+
+    }
+}
