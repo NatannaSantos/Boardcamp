@@ -31,12 +31,14 @@ export async function createGame(req, res) {
 export async function getGames(req, res) {
     try {
         const { rows: games } = await db.query(`
-        SELECT * FROM games
+        SELECT games.*,categories.name AS "categoryName" FROM games
+            JOIN categories ON games."categoryId"=categories.id
         `);
         if (games.length === 0) {
             res.sendStatus(404);
             return;
         }
+      
         res.send(games);
     } catch (error) {
         console.log(error);
