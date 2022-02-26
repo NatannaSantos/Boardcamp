@@ -22,19 +22,80 @@ export async function createCustomers(req, res) {
 }
 
 export async function getCustomers(req, res) {
+    const cpfQuery=req.query.cpf;
+
+    if(cpfQuery){
+        try {
+            const { rows: customers } = await db.query(`
+            SELECT * FROM customers WHERE cpf LIKE '${cpfQuery}%'
+            `);
+            if (customers.length === 0) {
+                res.sendStatus(404);
+                return;
+            }
+    
+            res.send(customers);
+        } catch (error) {
+            console.log(error);
+            res.sendStatus(500);
+        }
+        return;
+    }
+    
     try {
-        const {rows:customers}= await db.query(`
+        const { rows: customers } = await db.query(`
         SELECT * FROM customers
         `);
         if (customers.length === 0) {
             res.sendStatus(404);
             return;
         }
-        
+
         res.send(customers);
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
 
+    }
+}
+
+export async function getCustomerById(req, res) {
+    const { id } = req.params;
+    try {
+        const { rows: customer } = await db.query(`
+         SELECT * FROM customers
+         WHERE id=$1
+         `, [id]);
+        if (customer.length === 0) {
+            res.sendStatus(404);
+            return;
+        }
+        res.send(customer[0]);
+
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+}
+
+export async function putCustomer(req, res) {
+    const { id } = req.params;
+    const {name,phone,cpf,birthday} = req.body;
+    //console.log(name);
+    try {
+        const result = await db.query(`
+        UPDATE customers 
+        SET name=$1,phone=$2,cpf=$3,birthday=$4
+        WHERE id = $5
+        `, [name,phone,cpf,birthday,id]);
+
+        if (result.rowCount === 0) {
+            return res.sendStatus(404);
+        }
+        res.sendStatus(200);
+        //name = ${name},phone = ${phone},cpf = ${cpf},birthday = ${birthday}
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
     }
 }

@@ -16,8 +16,8 @@ export async function createGame(req, res) {
         if (result.rows.length > 0) {
             return res.status(409).send('Jogo já cadastrado')
         }
-        const resultCategory= await db.query(`SELECT id FROM categories WHERE id=$1`,[games.categoryId]);
-        if(resultCategory.rows.length===0){
+        const resultCategory = await db.query(`SELECT id FROM categories WHERE id=$1`, [games.categoryId]);
+        if (resultCategory.rows.length === 0) {
             res.status(400).send("Categoria inexistente");
         }
 
@@ -35,11 +35,33 @@ export async function createGame(req, res) {
 
 
 export async function getGames(req, res) {
+    const nameQuery = req.query.name.toLowerCase();
+    console.log(nameQuery);
+    
+    if (nameQuery) {
+        try {
+            const { rows: games } = await db.query(`
+                SELECT games.*,categories.name AS "categoryName" FROM games
+                    JOIN categories ON games."categoryId"=categories.id 
+                WHERE LOWER (games.name) LIKE '${nameQuery}%'
+                `);
+            if (games.length === 0) {
+                res.sendStatus(404);
+                return;
+            }
+            res.send(games);
+        } catch (error) {
+            console.log(error);
+            res.sendStatus(500);
+        }
+        return;
+    }
+
     try {
         const { rows: games } = await db.query(`
-        SELECT games.*,categories.name AS "categoryName" FROM games
-            JOIN categories ON games."categoryId"=categories.id
-        `);
+    SELECT games.*,categories.name AS "categoryName" FROM games
+        JOIN categories ON games."categoryId"=categories.id 
+    `);
         if (games.length === 0) {
             res.sendStatus(404);
             return;
@@ -50,4 +72,7 @@ export async function getGames(req, res) {
         console.log(error);
         res.sendStatus(500);
     }
+
+
+
 }
