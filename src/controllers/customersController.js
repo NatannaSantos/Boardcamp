@@ -22,9 +22,9 @@ export async function createCustomers(req, res) {
 }
 
 export async function getCustomers(req, res) {
-    const cpfQuery=req.query.cpf;
+    const cpfQuery = req.query.cpf;
 
-    if(cpfQuery){
+    if (cpfQuery) {
         try {
             const { rows: customers } = await db.query(`
             SELECT * FROM customers WHERE cpf LIKE '${cpfQuery}%'
@@ -33,7 +33,7 @@ export async function getCustomers(req, res) {
                 res.sendStatus(404);
                 return;
             }
-    
+
             res.send(customers);
         } catch (error) {
             console.log(error);
@@ -41,7 +41,7 @@ export async function getCustomers(req, res) {
         }
         return;
     }
-    
+
     try {
         const { rows: customers } = await db.query(`
         SELECT * FROM customers
@@ -80,14 +80,14 @@ export async function getCustomerById(req, res) {
 
 export async function putCustomer(req, res) {
     const { id } = req.params;
-    const {name,phone,cpf,birthday} = req.body;
+    const { name, phone, cpf, birthday } = req.body;
     //console.log(name);
     try {
         const result = await db.query(`
         UPDATE customers 
         SET name=$1,phone=$2,cpf=$3,birthday=$4
         WHERE id = $5
-        `, [name,phone,cpf,birthday,id]);
+        `, [name, phone, cpf, birthday, id]);
 
         if (result.rowCount === 0) {
             return res.sendStatus(404);

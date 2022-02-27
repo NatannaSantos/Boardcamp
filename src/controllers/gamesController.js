@@ -35,15 +35,16 @@ export async function createGame(req, res) {
 
 
 export async function getGames(req, res) {
-    const nameQuery = req.query.name.toLowerCase();
+    const nameQuery = req.query.name;
     console.log(nameQuery);
-    
+
     if (nameQuery) {
+        const name=nameQuery.toLowerCase();
         try {
             const { rows: games } = await db.query(`
                 SELECT games.*,categories.name AS "categoryName" FROM games
                     JOIN categories ON games."categoryId"=categories.id 
-                WHERE LOWER (games.name) LIKE '${nameQuery}%'
+                WHERE LOWER (games.name) LIKE '${name}%'
                 `);
             if (games.length === 0) {
                 res.sendStatus(404);
