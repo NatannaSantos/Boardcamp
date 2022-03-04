@@ -257,8 +257,7 @@ export async function finalizeRent(req, res) {
         `, [returnDate, delayFee, id]);
 
         let stockTotal = rental[0].stockTotal + 1;
-        console.log("estoque total Após voltar do aluguel:" + stockTotal);
-
+        
         await db.query(`
         UPDATE games 
         SET "stockTotal"=$1

@@ -71,7 +71,4 @@ export async function getGames(req, res) {
         console.log(error);
         res.sendStatus(500);
     }
-
-
-
 }
