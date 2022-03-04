@@ -2,7 +2,6 @@ import db from "../database.js";
 
 export async function createGame(req, res) {
     const games = req.body;
-    console.log(games);
     const stockTotal = parseInt(games.stockTotal);
     const pricePerDay = parseInt(games.pricePerDay);
 
@@ -36,10 +35,9 @@ export async function createGame(req, res) {
 
 export async function getGames(req, res) {
     const nameQuery = req.query.name;
-    console.log(nameQuery);
 
     if (nameQuery) {
-        const name=nameQuery.toLowerCase();
+        const name = nameQuery.toLowerCase();
         try {
             const { rows: games } = await db.query(`
                 SELECT games.*,categories.name AS "categoryName" FROM games

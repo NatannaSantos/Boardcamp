@@ -81,7 +81,6 @@ export async function getCustomerById(req, res) {
 export async function putCustomer(req, res) {
     const { id } = req.params;
     const { name, phone, cpf, birthday } = req.body;
-    //console.log(name);
     try {
         const result = await db.query(`
         UPDATE customers 
@@ -93,7 +92,7 @@ export async function putCustomer(req, res) {
             return res.sendStatus(404);
         }
         res.sendStatus(200);
-        //name = ${name},phone = ${phone},cpf = ${cpf},birthday = ${birthday}
+        
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
